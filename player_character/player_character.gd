@@ -1,8 +1,18 @@
 extends MeshInstance3D
 
+#_enter_tree() runs always before _ready()
+#Hence, there is no delay from node creation to setting multiplayer authority
+#For example, try moving `set_multiplayer_authority` onto ready()
+#and see the error where MultiplayerSynchronizer
+#tried to fetch it right there but no networkID!
+func _enter_tree():
+	set_multiplayer_authority(name.to_int())
+	
 func _ready():
-	name = str(get_multiplayer_authority())
 	$Name.text = str(name)
+	
+	if name.to_int() == multiplayer.get_unique_id():
+		get_parent().get_parent().local_player_character = self
 
 func _physics_process(delta):
 	if is_multiplayer_authority():
@@ -14,11 +24,6 @@ func _physics_process(delta):
 		if Input.is_key_pressed(KEY_D):direction.x += 1
 		
 		global_position += direction.normalized()
-		rpc("remote_set_position", global_position)
-		
-@rpc(unreliable)
-func remote_set_position(authority_position):
-	global_position = authority_position
 
 @rpc(authority, call_local, reliable, 1)
 func display_message(message):

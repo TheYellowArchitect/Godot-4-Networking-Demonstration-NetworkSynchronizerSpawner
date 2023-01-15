@@ -1,17 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://bxv0sdh81ec2f"]
+[gd_scene load_steps=6 format=3 uid="uid://bxv0sdh81ec2f"]
 
 [ext_resource type="Script" path="res://player_character/player_character.gd" id="1_u4q1x"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_si15v"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xd4h2"]
 albedo_color = Color(0.164706, 0.482353, 1, 1)
 
-[sub_resource type="SphereMesh" id="SphereMesh_kjdfc"]
+[sub_resource type="SphereMesh" id="SphereMesh_w4jt1"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_aiefh"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_ax45b"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3xotu"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/sync = true
 
 [node name="PlayerCharacter" type="MeshInstance3D"]
-material_override = SubResource("StandardMaterial3D_si15v")
-mesh = SubResource("SphereMesh_kjdfc")
+material_override = SubResource("StandardMaterial3D_xd4h2")
+mesh = SubResource("SphereMesh_w4jt1")
 script = ExtResource("1_u4q1x")
 
 [node name="Message" type="Label3D" parent="."]
@@ -29,6 +34,9 @@ font_size = 64
 [node name="MouseClickArea" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MouseClickArea"]
-shape = SubResource("SphereShape3D_aiefh")
+shape = SubResource("SphereShape3D_ax45b")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_3xotu")
 
 [connection signal="input_event" from="MouseClickArea" to="." method="_on_mouse_click_area_input_event"]
